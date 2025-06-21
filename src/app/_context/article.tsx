@@ -39,21 +39,20 @@ export default function NewsProvider({
       console.error("Failed to add article:", error);
     }
   };
-
   const deleteArticle = async (id: string) => {
     try {
-      await axios.delete("/api/articles", { data: id });
+      await axios.post("/api/articles/delete", { id });
       await getArticles();
     } catch (error) {
       console.error("Failed to delete article:", error);
     }
   };
-
   const updateArticle = async (data: ArticleType) => {
     try {
       await axios.put("/api/articles", {
         ...data,
-        is_published: true, // default true, эсвэл UI-с ирж болно
+        id: data.id, // _id-г id болгож дамжуулж байна
+        is_published: true,
       });
       await getArticles();
     } catch (error) {

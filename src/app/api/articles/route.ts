@@ -33,7 +33,14 @@ export const PUT = async (req: Request) => {
          updated_at = CURRENT_TIMESTAMP
      WHERE id = $6
      RETURNING *`,
-    [title, content, tags, is_published === "true", image, id]
+    [
+      title,
+      content,
+      tags,
+      is_published === true || is_published === "true",
+      image,
+      id,
+    ]
   );
 
   return Response.json({ article: result[0] });

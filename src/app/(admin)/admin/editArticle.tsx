@@ -1,26 +1,30 @@
 "use client";
-import { useState } from "react";
 
-import { ArticleType } from "@/types/article";
-import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
+import { useArticles } from "@/app/_context/article";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-
+import { Label } from "@/components/ui/label";
 import { handleUpload } from "@/lib/handle-upload";
-import { useArticles } from "@/app/_context/article";
+import { ArticleType } from "@/types/article";
+import Image from "next/image";
+import { useState } from "react";
 
-const EditArticles = ({ article }: { article: ArticleType }) => {
-  const { updateArticle, deleteArticle } = useArticles();
-  const [editData, setEditData] = useState<ArticleType>(article);
+export function EditArticle({ article }: { article: ArticleType }) {
+  const { deleteArticle, updateArticle } = useArticles();
+
+  const [title, setTitle] = useState(article.title);
+  const [content, setContent] = useState(article.content);
+  const [tags, setTags] = useState(article.tags.join(", "));
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -30,17 +34,14 @@ const EditArticles = ({ article }: { article: ArticleType }) => {
       setNewImageFile(file);
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
-      setEditData((prev) => ({
-        ...prev,
-        image: url,
-      }));
     }
   };
 
-  const handleSave = async () => {
-    try {
-      let imageUrl = editData.image;
+  const editHandler = async (e: React.FormEvent) => {
+    e.preventDefault();
 
+    try {
+      let imageUrl = article.image;
       if (newImageFile) {
         const uploadedUrl = await handleUpload(newImageFile);
         if (!uploadedUrl) throw new Error("Upload failed");
@@ -48,138 +49,102 @@ const EditArticles = ({ article }: { article: ArticleType }) => {
       }
 
       await updateArticle({
-        ...editData,
+        id: article.id,
+        title,
+        content,
+        tags: tags.split(",").map((t) => t.trim()),
         image: imageUrl,
+        createdAt: article.createdAt,
         updatedAt: new Date().toISOString(),
       });
-    } catch (err) {
-      console.error("Save error:", err);
-      alert("Хадгалахад алдаа гарлаа.");
+    } catch (error) {
+      console.error("Edit error:", error);
+      alert("Өөрчлөлтийг хадгалахад алдаа гарлаа.");
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const deleteHandle = async () => {
     try {
-      await deleteArticle(id);
+      await deleteArticle(article.id);
     } catch (error) {
-      console.error("Error deleting:", error);
+      console.log("Delete error:", error);
+      alert("Устгах үед алдаа гарлаа.");
     }
   };
 
   return (
-    <Card className="overflow-hidden cursor-pointer">
-      <div className="relative h-48">
-        <Image
-          src={article.image}
-          alt="Article"
-          fill
-          className="object-cover"
-        />
-      </div>
-      <CardHeader>
-        <Badge className="w-fit">{article.tags.join(", ")}</Badge>
-        <CardTitle className="text-lg">{article.title}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex items-center justify-between">
-        <div>
-          <p
-            dangerouslySetInnerHTML={{ __html: article.content }}
-            className="text-sm text-muted-foreground line-clamp-2"
-          />
-        </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setEditData(article);
-                setPreviewUrl(null);
-              }}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-white border shadow text-red-500 hover:bg-red-100 transition"
-              aria-label="Edit article"
-            >
-              ✎
-            </button>
-          </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto w-full max-w-3xl">
-            <DialogHeader className="px-4">
-              <DialogTitle className="text-xl">Мэдээ засах</DialogTitle>
-              <div className="space-y-4 w-full">
-                <div>
-                  <p className="text-sm font-medium mb-1">Гарчиг</p>
-                  <Input
-                    value={editData.title}
-                    onChange={(e) =>
-                      setEditData({ ...editData, title: e.target.value })
-                    }
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1 bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
+        >
+          Засах
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[500px]">
+        <form onSubmit={editHandler}>
+          <DialogHeader>
+            <DialogTitle>Мэдээ засах</DialogTitle>
+            <DialogDescription>
+              Нийтлэлийн мэдээллийг шинэчлэх бол энд өөрчлөөд хадгалаарай.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label>Гарчиг</Label>
+              <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+            </div>
+            <div className="grid gap-2">
+              <Label>Агуулга</Label>
+              <Input
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Тагууд (таслалаар тусгаарла)</Label>
+              <Input value={tags} onChange={(e) => setTags(e.target.value)} />
+            </div>
+            <div className="grid gap-2">
+              <Label>Зураг</Label>
+              <Input type="file" onChange={handleImageChange} />
+              {(previewUrl || article.image) && (
+                <div className="mt-2">
+                  <Image
+                    src={previewUrl || article.image}
+                    alt="preview"
+                    width={400}
+                    height={200}
+                    style={{ height: "auto" }}
+                    className="rounded-md object-contain mx-auto"
                   />
                 </div>
+              )}
+            </div>
+          </div>
 
-                <div>
-                  <p className="text-sm font-medium mb-1">Агуулга</p>
-                  <Input
-                    value={editData.content}
-                    onChange={(e) =>
-                      setEditData({ ...editData, content: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div>
-                  <p className="text-sm font-medium mb-1">Tags</p>
-                  <Input
-                    value={editData.tags?.join(", ")}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        tags: e.target.value
-                          .split(",")
-                          .map((tag) => tag.trim()),
-                      })
-                    }
-                  />
-                </div>
-
-                <div>
-                  <p className="text-sm font-medium mb-1">Зураг</p>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                  {(previewUrl || editData.image) && (
-                    <div className="mt-4">
-                      <Image
-                        src={previewUrl || editData.image}
-                        alt="Зургийн урьдчилсан харагдац"
-                        className="max-h-60 rounded-lg object-contain mx-auto"
-                        width={800}
-                        height={400}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </DialogHeader>
-
-            <div className="flex gap-4 mt-4 px-4">
+          <DialogFooter className="mt-4 flex flex-wrap gap-2">
+            <DialogClose asChild>
               <Button
-                variant="outline"
+                variant="destructive"
                 type="button"
-                onClick={() => handleDelete(article._id || "")}
-                className="text-red-500 hover:text-red-700 hover:bg-red-100 border border-red-200"
+                onClick={deleteHandle}
               >
                 Устгах
               </Button>
-              <Button type="button" onClick={handleSave} className="flex-1">
+            </DialogClose>
+            <DialogClose asChild>
+              <Button type="submit" onClick={editHandler}>
                 Хадгалах
               </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </CardContent>
-    </Card>
+            </DialogClose>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
-};
-
-export default EditArticles;
+}

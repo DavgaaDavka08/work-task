@@ -1,10 +1,18 @@
 import { runQuery } from "@/server/queryService";
 
-// DELETE /api/articles?id=123
-export const DELETE = async (req: Request) => {
-  const id = await req.json();
+export const POST = async (req: Request) => {
+  try {
+    const { id } = await req.json();
 
-  await runQuery(`DELETE FROM articles WHERE id = $1`, [id]);
+    if (!id) {
+      return new Response("ID is required", { status: 400 });
+    }
 
-  return new Response("Article deleted", { status: 200 });
+    await runQuery(`DELETE FROM articles WHERE id = $1`, [id]);
+
+    return new Response("Article deleted", { status: 200 });
+  } catch (error) {
+    console.error("Error deleting article:", error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
 };

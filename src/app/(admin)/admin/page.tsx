@@ -1,7 +1,13 @@
 import React from "react";
 
+import MapArticles from "./mapArticles";
+
 const Page = () => {
-  return <div>cs</div>;
+  return (
+    <div>
+      <MapArticles />
+    </div>
+  );
 };
 
 export default Page;

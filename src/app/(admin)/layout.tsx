@@ -1,12 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import type React from "react";
-import {
-  LayoutDashboard,
-  Newspaper,
-  MessageSquare,
-  ChevronLeft,
-} from "lucide-react";
+import { LayoutDashboard, MessageSquare, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminLayout({
@@ -35,16 +30,6 @@ export default function AdminLayout({
               <LayoutDashboard className="h-5 w-5" />
               Удирдлагын самбар
             </Button>
-
-            <Link href="/news">
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 h-12 text-gray-700 hover:bg-gray-100"
-              >
-                <Newspaper className="h-5 w-5" />
-                Мэдээ удирдах
-              </Button>
-            </Link>
 
             <Link href="/comments">
               <Button

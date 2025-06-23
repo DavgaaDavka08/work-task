@@ -3,8 +3,12 @@ import { runQuery } from "@/server/queryService";
 export const POST = async (req: Request) => {
   const { title, content, tags, author_id, image } = await req.json();
 
+  if (!title || !content || !tags || !image) {
+    return new Response("All fields are required", { status: 400 });
+  }
+
   const result = await runQuery(
-    `INSERT INTO articles (title, content, tags, author_id, is_published, image)
+    `INSERT INTO article (title, content, tags, author_id, is_published, image)
      VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *`,
     [title, content, tags, author_id, true, image]
@@ -15,16 +19,21 @@ export const POST = async (req: Request) => {
 
 export const GET = async () => {
   const articles = await runQuery(
-    `SELECT * FROM articles WHERE is_published = true ORDER BY created_at DESC`
+    `SELECT * FROM article WHERE is_published = true ORDER BY created_at DESC`
   );
 
   return Response.json({ articles });
 };
+
 export const PUT = async (req: Request) => {
   const { title, content, tags, is_published, id, image } = await req.json();
 
+  if (!id || !title || !content || !tags || !image) {
+    return new Response("Missing required fields", { status: 400 });
+  }
+
   const result = await runQuery(
-    `UPDATE articles
+    `UPDATE article
      SET title = $1,
          content = $2,
          tags = $3,

@@ -8,7 +8,7 @@ export const POST = async (req: Request) => {
       return new Response("ID is required", { status: 400 });
     }
 
-    await runQuery(`DELETE FROM articles WHERE id = $1`, [id]);
+    await runQuery(`DELETE FROM article WHERE id = $1`, [id]);
 
     return new Response("Article deleted", { status: 200 });
   } catch (error) {

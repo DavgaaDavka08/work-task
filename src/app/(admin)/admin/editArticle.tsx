@@ -1,5 +1,4 @@
 "use client";
-
 import { useArticles } from "@/app/_context/article";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,47 +37,38 @@ export function EditArticle({ article }: { article: ArticleType }) {
 
   const editHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      let imageUrl = article.image;
-      if (newImageFile) {
-        const uploadedUrl = await handleUpload(newImageFile);
-        if (!uploadedUrl) throw new Error("Upload failed");
-        imageUrl = uploadedUrl;
-      }
 
-      await updateArticle({
-        id: article.id,
-        title,
-        content,
-        tags: tags.split(",").map((t) => t.trim()),
-        image: imageUrl,
-        createdAt: article.createdAt,
-        updatedAt: new Date().toISOString(),
-      });
-    } catch (error) {
-      console.error("Edit error:", error);
-      alert("Өөрчлөлтийг хадгалахад алдаа гарлаа.");
+    let imageUrl = article.image;
+    if (newImageFile) {
+      const uploadedUrl = await handleUpload(newImageFile);
+      if (!uploadedUrl) throw new Error("Upload failed");
+      imageUrl = uploadedUrl;
     }
+
+    await updateArticle({
+      id: article.id,
+      title,
+      content,
+      tags: tags.split(",").map((t) => t.trim()),
+      image: imageUrl,
+      createdAt: article.createdAt,
+      updatedAt: new Date().toISOString(),
+    });
   };
 
   const deleteHandle = async () => {
-    try {
-      await deleteArticle(article.id);
-    } catch (error) {
-      console.log("Delete error:", error);
-      alert("Устгах үед алдаа гарлаа.");
-    }
+    await deleteArticle(article.id);
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          ✏️ Засах
+        <Button size="sm" className="bg-black">
+          Засах
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[550px] rounded-xl shadow-xl p-6">
+      <DialogContent className="sm:max-w-[550px] max-h-[80vh] overflow-y-auto rounded-xl shadow-xl p-6">
         <form onSubmit={editHandler}>
           <DialogHeader>
             <DialogTitle className="text-lg font-bold text-gray-800">
@@ -123,18 +113,20 @@ export function EditArticle({ article }: { article: ArticleType }) {
                 className="border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500"
               />
             </div>
-            <div className="grid gap-2">
+            <div className=" gap-2">
               <Label className="text-sm font-medium text-gray-700">Зураг</Label>
               <Input type="file" onChange={handleImageChange} />
               {(previewUrl || article.image) && (
                 <div className="mt-3">
-                  <Image
-                    src={previewUrl || article.image}
-                    alt="Preview"
-                    width={500}
-                    height={300}
-                    className="rounded-lg object-cover mx-auto shadow"
-                  />
+                  <div className="mt-3">
+                    <Image
+                      src={previewUrl || article.image}
+                      alt="Preview"
+                      width={1000}
+                      height={1000}
+                      className="rounded-lg h-[300px] w-[500px] object-cover mx-auto  cursor-zoom-in"
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -143,15 +135,11 @@ export function EditArticle({ article }: { article: ArticleType }) {
           <DialogFooter className="mt-6 flex flex-wrap gap-3 justify-end">
             <DialogClose asChild>
               <Button type="button" onClick={deleteHandle} className="px-4">
-                Устгах
+                устгах
               </Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button
-                type="submit"
-                onClick={editHandler}
-                className=" text-white px-6"
-              >
+              <Button type="submit" onClick={editHandler}>
                 Хадгалах
               </Button>
             </DialogClose>

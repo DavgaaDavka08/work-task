@@ -1,9 +1,7 @@
 "use client";
-
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { ArticleType } from "@/types/article";
-
 type NewsContextTypes = {
   articles: ArticleType[];
   addArticle: (data: ArticleType) => void;
@@ -51,7 +49,7 @@ export default function NewsProvider({
     try {
       await axios.put("/api/articles", {
         ...data,
-        id: data.id, // _id-г id болгож дамжуулж байна
+        id: data.id,
         is_published: true,
       });
       await getArticles();

@@ -14,7 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { handleUpload } from "@/lib/handle-upload";
-
 import Image from "next/image";
 import { useState } from "react";
 
@@ -25,6 +24,7 @@ export function AddArticle() {
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { addArticle } = useArticles();
+
   const addHandle = async () => {
     if (!title || !content || !image) return;
     const uploadImage = await handleUpload(image);
@@ -33,11 +33,12 @@ export function AddArticle() {
       content,
       tags: tags.split(",").map((tag) => tag.trim()),
       image: uploadImage,
-      _id: "",
+      id: "",
       createdAt: "",
       updatedAt: "",
     });
   };
+
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -45,57 +46,77 @@ export function AddArticle() {
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
+
   return (
     <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button className="bg-blue-600 hover:bg-blue-700">Мэдээ нэмэх</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Мэдээ нэмэх </DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label>Title</Label>
-              <Input onChange={(e) => setTitle(e.target.value)} />
-            </div>
-            <div className="grid gap-3">
-              <Label>content</Label>
-              <Input onChange={(e) => setContent(e.target.value)} />
-            </div>
-            <div className="grid gap-3">
-              <Label>tags</Label>
-              <Input onChange={(e) => setTags(e.target.value)} />
-            </div>
-            <div className="grid gap-3">
-              <Label>image</Label>
-              <Input type="file" onChange={handleImage} />
-              {previewUrl && (
-                <Image
-                  src={previewUrl}
-                  alt=""
-                  className="mt-4 max-h-60 rounded-lg object-cover"
-                  width={1000}
-                  height={1000}
-                />
-              )}
-            </div>
+      <DialogTrigger asChild>
+        <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition">
+          📰 Мэдээ нэмэх
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[500px] rounded-xl border border-gray-200 shadow-xl p-6">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold text-gray-800">
+            Мэдээ нэмэх
+          </DialogTitle>
+          <DialogDescription className="text-sm text-gray-500">
+            Эндээс шинэ мэдээ оруулна уу. Бүх талбарыг бүрэн бөглөнө үү.
+          </DialogDescription>
+        </DialogHeader>
+        <form className="grid gap-5 mt-4">
+          <div className="grid gap-2">
+            <Label className="text-sm font-medium text-gray-700">Гарчиг</Label>
+            <Input
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Жишээ: Шинэ технологийн мэдээ"
+              className="rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-          <DialogFooter>
+          <div className="grid gap-2">
+            <Label className="text-sm font-medium text-gray-700">Агуулга</Label>
+            <Input
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Жишээ: Өнөөдөр гарсан технологийн..."
+              className="rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label className="text-sm font-medium text-gray-700">Тагууд</Label>
+            <Input
+              onChange={(e) => setTags(e.target.value)}
+              placeholder="Жишээ: tech, шинэ, мэдээ"
+              className="rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label className="text-sm font-medium text-gray-700">Зураг</Label>
+            <Input type="file" onChange={handleImage} />
+            {previewUrl && (
+              <Image
+                src={previewUrl}
+                alt="Preview"
+                className="mt-3 h-48 w-full object-cover rounded-lg shadow"
+                width={500}
+                height={300}
+              />
+            )}
+          </div>
+          <DialogFooter className="mt-4 flex justify-between">
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" className="rounded-md">
+                Цуцлах
+              </Button>
             </DialogClose>
-            <Button onClick={addHandle} type="submit">
-              Save changes
+            <Button
+              onClick={addHandle}
+              type="button"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-md"
+            >
+              Хадгалах
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

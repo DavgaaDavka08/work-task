@@ -13,7 +13,6 @@ export const POST = async (req: Request) => {
         { status: 400 }
       );
     }
-
     const getUsersQuery = `SELECT * FROM "users" WHERE email = $1`;
     const userQuery = await runQuery(getUsersQuery, [email]);
 

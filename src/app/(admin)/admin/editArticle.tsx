@@ -21,7 +21,6 @@ import { useState } from "react";
 
 export function EditArticle({ article }: { article: ArticleType }) {
   const { deleteArticle, updateArticle } = useArticles();
-
   const [title, setTitle] = useState(article.title);
   const [content, setContent] = useState(article.content);
   const [tags, setTags] = useState(article.tags.join(", "));
@@ -39,7 +38,6 @@ export function EditArticle({ article }: { article: ArticleType }) {
 
   const editHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       let imageUrl = article.image;
       if (newImageFile) {
@@ -75,70 +73,85 @@ export function EditArticle({ article }: { article: ArticleType }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
-        >
-          Засах
+        <Button variant="outline" size="sm">
+          ✏️ Засах
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[550px] rounded-xl shadow-xl p-6">
         <form onSubmit={editHandler}>
           <DialogHeader>
-            <DialogTitle>Мэдээ засах</DialogTitle>
-            <DialogDescription>
-              Нийтлэлийн мэдээллийг шинэчлэх бол энд өөрчлөөд хадгалаарай.
+            <DialogTitle className="text-lg font-bold text-gray-800">
+              Мэдээ засах
+            </DialogTitle>
+            <DialogDescription className="text-sm text-gray-500">
+              Та нийтлэлийн мэдээллийг шинэчилж хадгалах боломжтой.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-5 mt-5">
             <div className="grid gap-2">
-              <Label>Гарчиг</Label>
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} />
-            </div>
-            <div className="grid gap-2">
-              <Label>Агуулга</Label>
+              <Label className="text-sm font-medium text-gray-700">
+                Гарчиг
+              </Label>
               <Input
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Шинэ гарчиг..."
+                className="border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500"
               />
             </div>
             <div className="grid gap-2">
-              <Label>Тагууд (таслалаар тусгаарла)</Label>
-              <Input value={tags} onChange={(e) => setTags(e.target.value)} />
+              <Label className="text-sm font-medium text-gray-700">
+                Агуулга
+              </Label>
+              <Input
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Агуулга..."
+                className="border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500"
+              />
             </div>
             <div className="grid gap-2">
-              <Label>Зураг</Label>
+              <Label className="text-sm font-medium text-gray-700">
+                Тагууд
+              </Label>
+              <Input
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="tech, мэдээ, шинэ"
+                className="border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label className="text-sm font-medium text-gray-700">Зураг</Label>
               <Input type="file" onChange={handleImageChange} />
               {(previewUrl || article.image) && (
-                <div className="mt-2">
+                <div className="mt-3">
                   <Image
                     src={previewUrl || article.image}
-                    alt="preview"
-                    width={400}
-                    height={200}
-                    style={{ height: "auto" }}
-                    className="rounded-md object-contain mx-auto"
+                    alt="Preview"
+                    width={500}
+                    height={300}
+                    className="rounded-lg object-cover mx-auto shadow"
                   />
                 </div>
               )}
             </div>
           </div>
 
-          <DialogFooter className="mt-4 flex flex-wrap gap-2">
+          <DialogFooter className="mt-6 flex flex-wrap gap-3 justify-end">
             <DialogClose asChild>
-              <Button
-                variant="destructive"
-                type="button"
-                onClick={deleteHandle}
-              >
+              <Button type="button" onClick={deleteHandle} className="px-4">
                 Устгах
               </Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button type="submit" onClick={editHandler}>
+              <Button
+                type="submit"
+                onClick={editHandler}
+                className=" text-white px-6"
+              >
                 Хадгалах
               </Button>
             </DialogClose>

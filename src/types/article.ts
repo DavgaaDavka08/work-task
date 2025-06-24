@@ -22,3 +22,16 @@ export type ArticleType = {
   updatedAt: string;
   id: string;
 };
+export type Comment = {
+  id: number;
+  article_id: number;
+  user_id: number;
+  author: string;
+  email: string;
+  content: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+  newsTitle?: string;
+  avatar?: string;
+  created_at: string;
+};

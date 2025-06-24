@@ -1,44 +1,25 @@
 import nodemailer from "nodemailer";
 
-export async function sendVerificationEmail(email: string, token: string) {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.example.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-
-  const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verify-email?token=${token}`;
-
-  await transporter.sendMail({
-    from: '"MyApp" <no-reply@myapp.com>',
-    to: email,
-    subject: "Verify your email",
-    html: `<p>Please click <a href="${verificationUrl}">here</a> to verify your email address.</p>`,
-  });
-}
-
-// ✅ Нэмэх ёстой хэсэг ↓↓↓
 export async function sendResetPasswordEmail(email: string, token: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const resetUrl = `${baseUrl}/reset-password?token=${token}`;
+
   const transporter = nodemailer.createTransport({
-    host: "smtp.example.com",
-    port: 587,
-    secure: false,
+    service: "gmail",
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 
-  const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}`;
-
   await transporter.sendMail({
-    from: '"MyApp" <no-reply@myapp.com>',
+    from: `"My App" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Reset your password",
-    html: `<p>You requested to reset your password. Click <a href="${resetUrl}">here</a> to proceed.</p>`,
+    html: `
+      <p>You requested to reset your password.</p>
+      <p>Click below to set a new password (valid for 1 hour):</p>
+      <a href="${resetUrl}">${resetUrl}</a>
+    `,
   });
 }

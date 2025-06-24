@@ -23,20 +23,32 @@ export function AddArticle() {
   const [tags, setTags] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const { addArticle } = useArticles();
 
   const addHandle = async () => {
     if (!title || !content || !image) return;
-    const uploadImage = await handleUpload(image);
-    addArticle({
-      title,
-      content,
-      tags: tags.split(",").map((tag) => tag.trim()),
-      image: uploadImage,
-      id: "",
-      createdAt: "",
-      updatedAt: "",
-    });
+    setLoading(true);
+    try {
+      const uploadImage = await handleUpload(image);
+      await addArticle({
+        title,
+        content,
+        tags: tags.split(",").map((tag) => tag.trim()),
+        image: uploadImage,
+        id: "",
+        createdAt: "",
+        updatedAt: "",
+      });
+
+      setTitle("");
+      setContent("");
+      setTags("");
+      setImage(null);
+      setPreviewUrl(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,6 +79,7 @@ export function AddArticle() {
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-gray-700">Гарчиг</Label>
             <Input
+              value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Жишээ: Шинэ технологийн мэдээ"
               className="rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500"
@@ -75,6 +88,7 @@ export function AddArticle() {
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-gray-700">Агуулга</Label>
             <Input
+              value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Жишээ: Өнөөдөр гарсан технологийн..."
               className="rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500"
@@ -83,6 +97,7 @@ export function AddArticle() {
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-gray-700">Тагууд</Label>
             <Input
+              value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="Жишээ: tech, шинэ, мэдээ"
               className="rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500"
@@ -110,9 +125,10 @@ export function AddArticle() {
             <Button
               onClick={addHandle}
               type="button"
+              disabled={loading}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-md"
             >
-              Хадгалах
+              {loading ? "Хадгалж байна..." : "Хадгалах"}
             </Button>
           </DialogFooter>
         </form>

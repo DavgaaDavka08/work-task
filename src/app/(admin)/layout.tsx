@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import type React from "react";
-import { LayoutDashboard, MessageSquare, ChevronLeft } from "lucide-react";
+import { LayoutDashboard, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminLayout({
@@ -23,21 +23,13 @@ export default function AdminLayout({
       <div className="flex flex-1">
         <aside className="w-[280px] border-r bg-gray-50 flex flex-col">
           <nav className="flex-1 p-4 space-y-2">
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 h-12 text-blue-600 bg-blue-50 hover:bg-blue-100"
-            >
-              <LayoutDashboard className="h-5 w-5" />
-              Удирдлагын самбар
-            </Button>
-
-            <Link href="/comments">
+            <Link href="/admin">
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 h-12 text-gray-700 hover:bg-gray-100"
+                className="w-full justify-start gap-3 h-12 text-blue-600 bg-blue-50 hover:bg-blue-100"
               >
-                <MessageSquare className="h-5 w-5" />
-                Сэтгэгдэл хянах
+                <LayoutDashboard className="h-5 w-5" />
+                Удирдлагын самбар
               </Button>
             </Link>
           </nav>

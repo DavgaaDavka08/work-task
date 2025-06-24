@@ -25,6 +25,7 @@ export function EditArticle({ article }: { article: ArticleType }) {
   const [tags, setTags] = useState(article.tags.join(", "));
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,23 +38,27 @@ export function EditArticle({ article }: { article: ArticleType }) {
 
   const editHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      let imageUrl = article.image;
+      if (newImageFile) {
+        const uploadedUrl = await handleUpload(newImageFile);
+        if (!uploadedUrl) throw new Error("Upload failed");
+        imageUrl = uploadedUrl;
+      }
 
-    let imageUrl = article.image;
-    if (newImageFile) {
-      const uploadedUrl = await handleUpload(newImageFile);
-      if (!uploadedUrl) throw new Error("Upload failed");
-      imageUrl = uploadedUrl;
+      await updateArticle({
+        id: article.id,
+        title,
+        content,
+        tags: tags.split(",").map((t) => t.trim()),
+        image: imageUrl,
+        createdAt: article.createdAt,
+        updatedAt: new Date().toISOString(),
+      });
+    } finally {
+      setLoading(false);
     }
-
-    await updateArticle({
-      id: article.id,
-      title,
-      content,
-      tags: tags.split(",").map((t) => t.trim()),
-      image: imageUrl,
-      createdAt: article.createdAt,
-      updatedAt: new Date().toISOString(),
-    });
   };
 
   const deleteHandle = async () => {
@@ -139,8 +144,8 @@ export function EditArticle({ article }: { article: ArticleType }) {
               </Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button type="submit" onClick={editHandler}>
-                Хадгалах
+              <Button type="submit" onClick={editHandler} disabled={loading}>
+                {loading ? "Хадгалж байна..." : "Хадгалах"}
               </Button>
             </DialogClose>
           </DialogFooter>

@@ -4,6 +4,7 @@ export type User = {
   password: string;
   role: string;
   ip: string;
+  is_verified: boolean;
 };
 export type RegisteredUser = {
   id: number;

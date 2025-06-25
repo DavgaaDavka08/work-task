@@ -6,7 +6,7 @@ import { AddArticle } from "./addArticles";
 import { useArticles } from "@/app/_context/article";
 import Image from "next/image";
 import { EditArticle } from "./editArticle";
-import { Clock, Eye, Heart } from "lucide-react";
+
 export default function MapArticles() {
   const { articles } = useArticles();
   return (
@@ -58,16 +58,7 @@ export default function MapArticles() {
                     <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <EditArticle article={article} />
                     </div>
-                    <div className="absolute bottom-3 left-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs text-gray-700">
-                        <Eye className="w-3 h-3" />
-                        <span>124</span>
-                      </div>
-                      <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs text-gray-700">
-                        <Heart className="w-3 h-3" />
-                        <span>12</span>
-                      </div>
-                    </div>
+                    <div className="absolute bottom-3 left-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
                 </CardHeader>
                 <CardContent className="p-5 space-y-4">
@@ -98,12 +89,6 @@ export default function MapArticles() {
                       )}
                     </div>
                   )}
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <Clock className="w-3 h-3" />
-                      <span>2 цагийн өмнө</span>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
             ))}

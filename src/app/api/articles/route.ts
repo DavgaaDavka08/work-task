@@ -1,4 +1,4 @@
-import { runQuery } from "@/server/queryService";
+import { runQuery } from "@/lib/queryService";
 
 export const POST = async (req: Request) => {
   const { title, content, tags, author_id, image } = await req.json();
